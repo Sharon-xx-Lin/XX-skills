@@ -1,0 +1,23 @@
+{
+  "skill_name": "doc-review",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "帮我审查一下这篇项目周报,看看有没有错别字、标点、或者前后对不上的地方。文档在这里:evals/files/weekly_report.md",
+      "expected_output": "审查报告,应抓到:提陞→提升、有效的→有效地、中英文标点混用、TODO 和 XXX 残留占位符、'3组实验'但实际列了4组的数据矛盾;不应把正确的环比数据误报为矛盾",
+      "files": ["evals/files/weekly_report.md"]
+    },
+    {
+      "id": 1,
+      "prompt": "这是一篇我们产品的对外宣传文案,老板说读着有点虚、有点 AI 味,你帮我看看问题出在哪。文件:evals/files/marketing_copy.md",
+      "expected_output": "审查报告,应标记出:排比堆砌、'不是…而是…'套话反复、空泛形容词堆砌、'赋能/颗粒度/进行了一个…的动作'等生硬词;这些应归入主观建议区而非硬错;不应硬凑不存在的错别字",
+      "files": ["evals/files/marketing_copy.md"]
+    },
+    {
+      "id": 2,
+      "prompt": "review 这份技术方案,重点看结构完整不完整、前后有没有矛盾。evals/files/tech_design.md",
+      "expected_output": "审查报告,应抓到:'四个核心服务'实际只列3个且下句又说'三个服务'的数量矛盾、缺少风险/回滚/成本等板块、第四节标题与OFS内容脱节;可能识别两阶段提交术语误用;不应误报一致的里程碑时间",
+      "files": ["evals/files/tech_design.md"]
+    }
+  ]
+}
