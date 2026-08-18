@@ -24,7 +24,6 @@
 | [`doc-review`](doc-review/) | 轻量级文档审查:分层查文字质量与结构完整性,产出区分「硬错 / 主观建议」的审查报告,只审不改原稿。 | 可用 |
 | [`prd-prototype-demo`](prd-prototype-demo/) | PRD + 产品截图 → 逐帧交互线框图与可交互 demo。先把设计语言像素采样成可复用档案,再据此出图,解决 AI 原型「配色每次重新发明、一眼就是 AI 做的」。 | 可用 |
 
-> 新增 skill 时,在此表补一行,并在仓库下新建对应子目录。
 
 ## 什么是 skill
 
@@ -35,14 +34,8 @@ Skill 是一份让 AI agent 在特定场景下按既定方法论工作的说明�
 
 ## 使用方式
 
-将某个 skill 目录接入支持 skill 的 agent 环境(如 Claude / Mira),agent 会依据 `SKILL.md` 的 `description` 在匹配到相应用户意图时自动加载并遵循其中的方法论。运行时通常只需 `SKILL.md`;`evals/` 仅用于迭代与回归测试。
+将某个 skill 目录接入支持 skill 的 agent 环境(如 Claude Code / Codex / Trae),agent 会依据 `SKILL.md` 的 `description` 在匹配到相应用户意图时自动加载并遵循其中的方法论。运行时通常只需 `SKILL.md`;`evals/` 仅用于迭代与回归测试。
 
-## 开发约定
-
-- **一 skill 一目录**,目录名即 skill 名(小写连字符)。
-- `SKILL.md` 偏**方法论沉淀**,避免把具体的一次性案例写死进去。
-- 涉及可客观判定的检查,优先在 `scripts/` 放脚本,由 agent 调用,比纯文字描述更可靠。
-- 改动 skill 后,用其 `evals/` 跑一遍回归,确认没引入退化再提交。
 
 ## 注意
 
