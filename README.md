@@ -7,6 +7,7 @@
 ```
 .
 ├── README.md              # 本文件:仓库总览
+├── LICENSE                # MIT
 ├── .gitignore
 └── <skill-name>/          # 每个 skill 一个独立目录
     ├── SKILL.md           # skill 主体:frontmatter(触发描述) + 方法论正文
@@ -21,6 +22,7 @@
 | Skill | 作用 | 状态 |
 |---|---|---|
 | [`doc-review`](doc-review/) | 轻量级文档审查:分层查文字质量与结构完整性,产出区分「硬错 / 主观建议」的审查报告,只审不改原稿。 | 可用 |
+| [`prd-prototype-demo`](prd-prototype-demo/) | PRD + 产品截图 → 逐帧交互线框图与可交互 demo。先把设计语言像素采样成可复用档案,再据此出图,解决 AI 原型「配色每次重新发明、一眼就是 AI 做的」。 | 可用 |
 
 > 新增 skill 时,在此表补一行,并在仓库下新建对应子目录。
 
