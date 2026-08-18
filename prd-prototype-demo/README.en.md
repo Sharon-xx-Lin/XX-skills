@@ -245,4 +245,4 @@ Cross-product validation surfaced and fixed 9 defects, 5 of which were "directio
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](../LICENSE)

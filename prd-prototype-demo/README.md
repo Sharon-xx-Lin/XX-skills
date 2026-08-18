@@ -243,4 +243,4 @@ python3 scripts/screenshot.py --html demo.html --out s.png # 用 file:// 加载�
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](../LICENSE)
