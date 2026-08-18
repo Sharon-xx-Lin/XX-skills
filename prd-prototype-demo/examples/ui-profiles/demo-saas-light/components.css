@@ -1,0 +1,253 @@
+/* ============================================================
+   UI 档案 components 模板
+
+   用法：复制到 artifacts/ui-profiles/{产品名}/components.css，
+   按产品实际情况增删组件。截图里没有的组件不用硬凑。
+
+   铁律：只允许引用 tokens.css 的变量，禁止出现任何字面量颜色值。
+   这是「反 AI 味」最有效的结构性防线 —— 一旦允许直接写色值，
+   配色就会漂移回模型的默认审美。scripts/check_demo.py 会自动扫。
+
+   本模板已通过真实渲染验证（浏览器截图 + 与产品截图逐项比对）。
+   变量名与 tokens-template.css 对应，注意两处需按档案调整：
+     --bg-selected-gray / --bg-selected-blue —— 若产品只有一种选中态，
+     统一改成 --bg-selected 即可。
+   ============================================================ */
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: var(--font); font-size: var(--fs-body);
+  color: var(--text-1); background: var(--bg-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 图标：统一 currentColor 线性图标，尺寸对齐文字 ---------- */
+.icon { width: 16px; height: 16px; flex: 0 0 auto; stroke: currentColor;
+        fill: none; stroke-width: 1.6; stroke-linecap: round;
+        stroke-linejoin: round; vertical-align: -3px; }
+.icon-lg { width: 20px; height: 20px; }
+.icon-sm { width: 14px; height: 14px; }
+
+/* ---------- 布局骨架 ---------- */
+.app { display: flex; height: 100vh; overflow: hidden; }
+.topbar {
+  height: var(--h-topbar); display: flex; align-items: center;
+  gap: var(--sp-3); padding: 0 var(--sp-4);
+  border-bottom: 1px solid var(--border); background: var(--bg-body);
+  flex: 0 0 auto;
+}
+.sidebar {
+  width: var(--w-sidebar); flex: 0 0 auto; background: var(--bg-sidebar);
+  border-right: 1px solid var(--border); padding: var(--sp-3);
+  overflow-y: auto; display: flex; flex-direction: column; gap: var(--sp-1);
+}
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.content { flex: 1; overflow: auto; }
+
+/* ---------- 侧边栏导航项 ---------- */
+.nav-item {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: var(--h-control); padding: 0 var(--sp-2);
+  border-radius: var(--radius-md); color: var(--text-1);
+  font-size: var(--fs-title); cursor: pointer; user-select: none;
+  text-decoration: none; white-space: nowrap; overflow: hidden;
+}
+.nav-item:hover { background: var(--bg-hover); }
+.nav-item.is-active { background: var(--bg-selected-gray); font-weight: var(--fw-medium); }
+.nav-item.is-active-blue { background: var(--bg-selected-blue); color: var(--primary); font-weight: var(--fw-medium); }
+.nav-item .icon { color: var(--text-2); }
+.nav-item.is-active-blue .icon { color: var(--primary); }
+.nav-group-title {
+  font-size: var(--fs-sub); color: var(--text-2);
+  padding: var(--sp-3) var(--sp-2) var(--sp-1); font-weight: var(--fw-normal);
+}
+.nav-divider { height: 1px; background: var(--border); margin: var(--sp-3) 0; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--sp-2); height: var(--h-control); padding: 0 var(--sp-3);
+  border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: var(--bg-body); color: var(--text-1);
+  font-size: var(--fs-body); font-family: var(--font);
+  font-weight: var(--fw-medium); cursor: pointer; white-space: nowrap;
+}
+.btn:hover { background: var(--bg-hover); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: var(--text-on-primary); }
+.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-text { border-color: transparent; background: transparent; color: var(--text-1); }
+.btn-text:hover { background: var(--bg-hover); }
+.btn-text-primary { border-color: transparent; background: transparent; color: var(--primary); }
+.btn-text-primary:hover { background: var(--primary-bg-weak); }
+.btn-icon { width: var(--h-control); padding: 0; border-color: transparent;
+            background: transparent; color: var(--text-2); }
+.btn-icon:hover { background: var(--bg-hover); color: var(--text-1); }
+
+/* 胶囊按钮（首页快捷入口） */
+.chip {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  height: 36px; padding: 0 var(--sp-4);
+  border-radius: var(--radius-pill); border: 1px solid var(--border);
+  background: var(--bg-chip); color: var(--text-1);
+  font-size: var(--fs-body); cursor: pointer; white-space: nowrap;
+}
+.chip:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.chip .icon { color: var(--text-2); }
+
+/* ---------- 输入 ---------- */
+.input {
+  height: var(--h-control); width: 100%; padding: 0 var(--sp-3);
+  border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: var(--bg-body); color: var(--text-1);
+  font-size: var(--fs-body); font-family: var(--font); outline: none;
+}
+.input::placeholder { color: var(--text-3); }
+.input:focus { border-color: var(--primary); }
+.search {
+  display: flex; align-items: center; gap: var(--sp-2);
+  height: var(--h-control); padding: 0 var(--sp-3);
+  border-radius: var(--radius-md); background: var(--bg-input);
+  color: var(--text-3); font-size: var(--fs-body);
+}
+.search .icon { color: var(--text-3); }
+.search input {
+  border: none; background: transparent; outline: none; flex: 1;
+  font-size: var(--fs-body); font-family: var(--font); color: var(--text-1);
+}
+.search input::placeholder { color: var(--text-3); }
+
+/* 大输入容器（AI 提问框） */
+.prompt-box {
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  background: var(--bg-body); padding: var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-3);
+  box-shadow: var(--shadow-card);
+}
+.prompt-box textarea {
+  border: none; outline: none; resize: none; width: 100%;
+  font-family: var(--font); font-size: var(--fs-title);
+  color: var(--text-1); background: transparent; min-height: 48px;
+}
+.prompt-box textarea::placeholder { color: var(--text-3); }
+.prompt-foot { display: flex; align-items: center; justify-content: space-between; }
+.send-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none;
+  background: var(--bg-selected-gray); color: var(--text-3);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.send-btn.is-ready { background: var(--primary); color: var(--text-on-primary); }
+
+/* ---------- 卡片 ---------- */
+.card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--bg-body); padding: var(--sp-4);
+}
+.card-clickable { cursor: pointer; }
+.card-clickable:hover { border-color: var(--border-strong); background: var(--bg-hover); }
+.card-title { font-size: var(--fs-title); font-weight: var(--fw-medium); color: var(--text-1); }
+.card-sub { font-size: var(--fs-sub); color: var(--text-2); margin-top: 2px; }
+
+/* ---------- 表格（高信息密度） ---------- */
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-body); }
+.table th {
+  height: var(--h-row); padding: 0 var(--sp-3); text-align: left;
+  font-weight: var(--fw-normal); font-size: var(--fs-sub); color: var(--text-2);
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.table td {
+  height: var(--h-row); padding: 0 var(--sp-3); color: var(--text-1);
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.table tbody tr:hover td { background: var(--bg-hover); }
+.table .col-num { text-align: right; font-variant-numeric: tabular-nums; }
+.row-index { color: var(--text-3); font-size: var(--fs-cap); text-align: center; }
+.cell-link { color: var(--link); text-decoration: none; }
+.cell-link:hover { text-decoration: underline; }
+
+/* ---------- 标签 ---------- */
+.tag {
+  display: inline-flex; align-items: center; height: 20px;
+  padding: 0 var(--sp-2); border-radius: var(--radius-sm);
+  font-size: var(--fs-cap); color: var(--tag-text); white-space: nowrap;
+}
+.tag-blue   { background: var(--tag-blue-bg); }
+.tag-orange { background: var(--tag-orange-bg); }
+.tag-cyan   { background: var(--tag-cyan-bg); }
+.tag-yellow { background: var(--tag-yellow-bg); }
+
+/* ---------- AI 面板 ---------- */
+.ai-panel {
+  width: 340px; flex: 0 0 auto; border-left: 1px solid var(--border);
+  background: var(--bg-body); display: flex; flex-direction: column;
+}
+.ai-panel-head {
+  height: var(--h-topbar); display: flex; align-items: center;
+  gap: var(--sp-2); padding: 0 var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+.ai-panel-body { flex: 1; overflow-y: auto; padding: var(--sp-4); }
+.ai-panel-foot { padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--border); }
+.ai-greet { font-size: var(--fs-h2); font-weight: var(--fw-medium); margin-bottom: var(--sp-5); }
+.ai-sect-title { font-size: var(--fs-sub); color: var(--text-2); margin: var(--sp-4) 0 var(--sp-2); }
+.ai-chip-grid { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.ai-chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px;
+  padding: 0 var(--sp-3); border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg-body);
+  font-size: var(--fs-sub); color: var(--text-1); cursor: pointer;
+}
+.ai-chip:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.ai-chip .icon { color: var(--primary); }
+.ai-suggest {
+  display: block; padding: var(--sp-2) var(--sp-3); margin-bottom: var(--sp-2);
+  border-radius: var(--radius-md); background: var(--bg-hover);
+  font-size: var(--fs-sub); color: var(--text-1); cursor: pointer;
+}
+.ai-suggest:hover { background: var(--bg-selected-gray); }
+.ai-input-wrap {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: var(--sp-2) var(--sp-3); display: flex; flex-direction: column; gap: var(--sp-2);
+}
+.ai-input-wrap textarea {
+  border: none; outline: none; resize: none; font-family: var(--font);
+  font-size: var(--fs-sub); color: var(--text-1); min-height: 36px; background: transparent;
+}
+.ai-input-wrap textarea::placeholder { color: var(--text-3); }
+
+/* ---------- 工具栏（表格上方操作条） ---------- */
+.toolbar {
+  display: flex; align-items: center; gap: var(--sp-1);
+  height: 40px; padding: 0 var(--sp-3);
+  border-bottom: 1px solid var(--border); overflow-x: auto;
+}
+.toolbar .btn-text { height: 28px; font-weight: var(--fw-normal); font-size: var(--fs-sub); }
+.toolbar-divider { width: 1px; height: 16px; background: var(--border); margin: 0 var(--sp-2); }
+
+/* ---------- 标签页 ---------- */
+.tabs { display: flex; align-items: center; gap: var(--sp-1); border-bottom: 1px solid var(--border); padding: 0 var(--sp-3); }
+.tab {
+  display: inline-flex; align-items: center; gap: 6px; height: 38px;
+  padding: 0 var(--sp-3); font-size: var(--fs-body); color: var(--text-2);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tab.is-active { color: var(--primary); border-bottom-color: var(--primary); font-weight: var(--fw-medium); }
+
+/* ---------- 头像 ---------- */
+.avatar {
+  width: 20px; height: 20px; border-radius: 50%; flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text-on-primary); font-weight: var(--fw-medium);
+}
+
+/* ---------- 面包屑 ---------- */
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sub); color: var(--text-2); }
+.breadcrumb .sep { color: var(--text-3); }
+.breadcrumb a { color: var(--text-2); text-decoration: none; }
+.breadcrumb a:hover { color: var(--primary); }
+
+/* ---------- 徽标 ---------- */
+.badge {
+  display: inline-flex; align-items: center; height: 16px; padding: 0 5px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  font-size: 10px; color: var(--text-2);
+}

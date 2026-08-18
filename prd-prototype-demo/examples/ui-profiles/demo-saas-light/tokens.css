@@ -1,0 +1,78 @@
+/* ============================================================
+   示例 UI 档案（合成配色，非任何真实产品）
+
+   作用：让你在没有真实产品截图时也能立刻跑通全流程，验证安装成功。
+   正式使用时请用 scripts/sample_ui.py 对你自己的产品截图采样，
+   生成你自己的档案 —— 这份示例的颜色是编的，不要直接拿去做需求。
+   ============================================================ */
+
+:root {
+  /* ---------- 品牌色与功能色（分工严格） ----------
+     很多产品有两套主色：品牌色只用于 Logo / 装饰，
+     功能色用于按钮 / 链接 / 选中态。模型靠「参考风格」猜不到这种分工。 */
+  --brand:               #6E4AE0;   /* 品牌紫：Logo、装饰性强调 */
+  --primary:             #2563EB;   /* 功能蓝：主按钮、主操作 */
+  --primary-hover:       #1D4FD7;
+  --primary-bg-weak:     #EFF4FE;   /* 选中态底色 */
+  --link:                #2563EB;
+
+  /* ---------- 中性文字三档 ---------- */
+  --text-1:              #1F2329;   /* 一级：标题、正文、表格数据 */
+  --text-2:              #646A73;   /* 二级：副标题、表头 */
+  --text-3:              #8F959E;   /* 三级：占位符、行号、禁用态 */
+  --text-on-primary:     #FFFFFF;
+
+  /* ---------- 背景层 ---------- */
+  --bg-body:             #FFFFFF;
+  --bg-sidebar:          #FFFFFF;
+  --bg-input:            #F5F6F7;
+  --bg-hover:            #F5F6F7;
+  --bg-selected-gray:    #E9EAEC;
+  --bg-chip:             #F8F9FA;
+
+  /* ---------- 边框（全站单一发丝线） ---------- */
+  --border:              #DEE0E3;
+  --border-strong:       #C4C8CE;
+
+  /* ---------- 语义标签（浅底 + 统一深灰文字） ---------- */
+  --tag-blue-bg:         #E1EAFD;
+  --tag-orange-bg:       #FDE8CE;
+  --tag-cyan-bg:         #CFEFFB;
+  --tag-yellow-bg:       #FAEDC6;
+  --tag-text:            #1F2329;
+
+  /* ---------- 圆角（有刻度，克制） ---------- */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  8px;
+  --radius-xl:  12px;
+  --radius-pill: 999px;
+
+  /* ---------- 间距（4px 基准栅格） ---------- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
+  --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+
+  /* ---------- 字体 ---------- */
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", Arial, sans-serif;
+  --fs-h1:    28px;
+  --fs-h2:    20px;
+  --fs-title: 15px;
+  --fs-body:  14px;
+  --fs-sub:   13px;
+  --fs-cap:   12px;
+  --fw-normal: 400;
+  --fw-medium: 500;    /* B 端大量使用 500 */
+  --fw-bold:   600;    /* 谨慎使用 —— 堆 600/700 是 AI 味特征 */
+
+  /* ---------- 阴影（极其克制：靠 1px 边框分层） ---------- */
+  --shadow-none: none;
+  --shadow-card: 0 1px 2px rgba(31, 35, 41, 0.04);
+  --shadow-pop:  0 4px 12px rgba(31, 35, 41, 0.08);
+
+  /* ---------- 控件尺寸（决定信息密度，很关键） ---------- */
+  --h-control:  32px;
+  --h-row:      32px;   /* 表格行高：B 端一屏十几行是常态 */
+  --h-topbar:   48px;
+  --w-sidebar: 220px;
+}

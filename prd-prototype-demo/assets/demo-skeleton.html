@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{需求名} · 需求 Demo</title>
+
+<!-- ============================================================
+     单文件 demo 骨架模板
+
+     两条铁律都已内建在这个骨架里：
+
+     一、演过程，不只给结果。
+     下面的 P 播放器把「打字、提交、处理中、流式生成、结果落位」
+     排成时间轴。打开 demo 就从起点自动演到终点，帧号实时显示。
+     只给终态的 demo 比线框图信息还少，等于白做。
+
+     二、必须单文件自包含。
+     PM 的交付场景是「双击打开 / 直接发给同事」，走 file:// 协议。
+     浏览器在 file:// 下会拦截 XHR / fetch 类请求，也可能拦截外部资源。
+     用 <link> 引 CSS 或异步注入 sprite，本地起服务时一切正常，但用户
+     双击会样式全丢、图标全消失。这个坑只有实际双击才会暴露。
+
+     填充顺序：
+       1. tokens.css 内容      填入第一个 <style>
+       2. components.css 内容  填入第二个 <style>
+       3. 页面级布局样式        填入第三个 <style>（同样禁止字面量色值）
+       4. icons.svg 的 sprite  填入 <body> 开头
+       5. PRD 真实数据          填入 DATA 常量
+       6. 时间轴               写在 play() 里
+     ============================================================ -->
+
+<style>
+/* ===== 1. tokens：粘贴档案 tokens.css 的完整内容 ===== */
+</style>
+
+<style>
+/* ===== 2. components：粘贴档案 components.css 的完整内容 ===== */
+</style>
+
+<style>
+/* ===== 3. 本 demo 的页面级布局 =====
+   只放这个 demo 特有的布局。同样只能用 var(--token)，
+   需要新颜色时补进 tokens 而不是写死在这里。 */
+.hidden { display: none !important; }
+
+/* ---------- 过程演示专用（可直接沿用） ---------- */
+
+/* 出场：位移 4px + 淡入。弹跳/缩放/流光都是 AI 味，真实 B 端产品不这么动 */
+@keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.in { animation: rise .22s ease-out both; }
+
+/* 处理中 spinner */
+.spin { width: 13px; height: 13px; border: 1.6px solid var(--border);
+        border-top-color: var(--primary); border-radius: 50%;
+        animation: sp .8s linear infinite; flex: 0 0 auto; }
+@keyframes sp { to { transform: rotate(360deg); } }
+
+/* 流式输出光标：AI 正在生成文字时的产品惯例 */
+.caret::after { content: ""; display: inline-block; width: 2px; height: 1em;
+                background: var(--text-3); margin-left: 2px;
+                vertical-align: -2px; animation: blink .9s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* 模拟光标 + 点击涟漪：自动演播时让「点了哪里」看得见 */
+.ghost-cursor { position: fixed; width: 16px; height: 20px; z-index: 90;
+                pointer-events: none; opacity: 0; transition: opacity .2s; }
+.ghost-cursor.on { opacity: 1; }
+.ghost-cursor.move { transition: left .5s ease-in-out, top .5s ease-in-out, opacity .2s; }
+.ripple { position: fixed; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+          border: 1.5px solid var(--primary); border-radius: 50%;
+          z-index: 89; pointer-events: none; animation: rip .45s ease-out forwards; }
+@keyframes rip { from { transform: scale(.3); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+
+/* 逐行落位（表格/列表结果） */
+.stagger tbody tr { opacity: 0; }
+.stagger tbody tr.in { opacity: 1; }
+
+/* ---------- 控制条：图纸语言，不是产品 UI ---------- */
+.demo-bar { display: flex; align-items: center; gap: var(--sp-2);
+            padding: var(--sp-2) var(--sp-4); border-bottom: 1px solid var(--border);
+            background: var(--bg-hover); font-size: var(--fs-sub); }
+.demo-bar .step { color: var(--text-2); }
+.demo-bar .step b { color: var(--primary); }
+.demo-bar .ctl { display: flex; gap: var(--sp-1); margin-left: auto; }
+.demo-bar .ctl button {
+  display: inline-flex; align-items: center; gap: 5px; height: 26px;
+  padding: 0 var(--sp-2); border: 1px solid var(--border);
+  border-radius: var(--radius-md); background: var(--bg-body);
+  font-family: var(--font); font-size: var(--fs-cap);
+  color: var(--text-1); cursor: pointer;
+}
+.demo-bar .ctl button:hover { background: var(--bg-hover); }
+</style>
+</head>
+<body>
+
+<!-- ===== 4. 图标 sprite：粘贴 icons.svg 的 <svg>...</svg> =====
+     引用写法见档案 icons.svg 的说明：用 svg + use 指向 symbol 的 id。
+     缺图标时按已有风格补一个 symbol，不要用 emoji 代替 -->
+
+
+<!-- ===== 控制条 =====
+     帧号与第③步画面清单、第④步线框图帧号对齐，评审时能互相指认。
+     「跳到结果」是必需的 —— 评审现场经常不想等动画。 -->
+<div class="demo-bar">
+  <b>{需求名 · 章节号}</b>
+  <span class="step" id="step">当前：<b>A1</b> 起点</span>
+  <div class="ctl">
+    <button id="btn-replay">重播过程</button>
+    <button id="btn-skip">跳到结果</button>
+  </div>
+</div>
+
+<!-- ===== 页面内容 =====
+     只做需求涉及的页面，但涉及到的那条链路要演完整。
+
+     数据要像真的：用 PRD / 截图里的真实字段名、业务词汇、合理量级。
+     「示例数据 1 / 张三 / Lorem ipsum」会立刻让 demo 失去说服力。
+
+     信息密度要对齐产品：B 端表格行高 32px 左右、一屏十几行是常态。
+     行高 60px、一屏五行的话，即使配色全对也一眼假。 -->
+
+<div class="app">
+  <aside class="sidebar"><!-- 侧边导航 --></aside>
+  <div class="main">
+    <header class="topbar"><!-- 顶栏 --></header>
+    <div class="content" id="stage">
+      <!-- 过程演示的舞台：起点内容由 reset() 铺，后续内容由 play() 逐步追加 -->
+    </div>
+  </div>
+</div>
+
+<svg class="ghost-cursor" id="gc" viewBox="0 0 16 20"><path
+  d="M2 1.5 L2 15 L5.6 11.6 L8.2 17.6 L10.6 16.5 L8 10.7 L13 10.4 Z"
+  fill="var(--bg-body)" stroke="var(--text-1)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+
+<script>
+/* ===== 5. PRD 真实数据 =====
+   写成字面量常量 —— file:// 下异步请求会被浏览器拦截。 */
+var DATA = {
+  q: "{用户输入的真实问题 / 表单内容}",
+  lead: "{结果前导文字}",
+  rows: [/* {真实字段取值} */]
+};
+
+var $ = function (s) { return document.querySelector(s); };
+function el(tag, cls, html) {
+  var d = document.createElement(tag);
+  if (cls) d.className = cls;
+  if (html != null) d.innerHTML = html;
+  return d;
+}
+
+/* ============================================================
+   时间轴播放器
+
+   at(ms, fn) 的 ms 是「距上一步的间隔」，读起来就是一条时间轴。
+   reset() 会清掉所有待执行的 timer，避免重播时新旧时间轴叠加
+   —— 这是最容易出的 bug。
+   ============================================================ */
+var P = {
+  t: [], clock: 0, playing: false,
+  reset: function () {
+    this.t.forEach(clearTimeout);
+    this.t = []; this.clock = 0; this.playing = false;
+  },
+  at: function (ms, fn) {
+    this.clock += ms;
+    this.t.push(setTimeout(fn, this.clock));
+    return this;
+  }
+};
+function step(code, txt) { $('#step').innerHTML = '当前：<b>' + code + '</b> ' + txt; }
+
+/* ---- 模拟光标 ---- */
+function gcTo(sel) {
+  var n = typeof sel === 'string' ? $(sel) : sel;
+  if (!n) return;
+  var r = n.getBoundingClientRect(), g = $('#gc');
+  g.classList.add('on', 'move');
+  g.style.left = (r.left + r.width * 0.55) + 'px';
+  g.style.top = (r.top + r.height * 0.55) + 'px';
+}
+function gcClick(sel) {
+  var n = typeof sel === 'string' ? $(sel) : sel;
+  if (!n) return;
+  var r = n.getBoundingClientRect(), d = el('div', 'ripple');
+  d.style.left = (r.left + r.width * 0.55) + 'px';
+  d.style.top = (r.top + r.height * 0.55) + 'px';
+  document.body.appendChild(d);
+  setTimeout(function () { d.remove(); }, 500);
+}
+function gcHide() { $('#gc').classList.remove('on'); }
+
+/* ---- 打字机：逐字敲入，比整段瞬现真实得多 ---- */
+function typeInto(sel, txt, per) {
+  var box = $(sel);
+  box.value = '';
+  for (var i = 1; i <= txt.length; i++) {
+    (function (k) { P.at(per || 26, function () { box.value = txt.slice(0, k); }); })(i);
+  }
+}
+
+/* ---- 流式输出：逐句吐字，末尾闪烁光标 ---- */
+function stream(parent, lines, per) {
+  var node = el('div', 'msg-ai');
+  P.at(0, function () { parent.appendChild(node); node.classList.add('caret'); });
+  lines.forEach(function (ln) {
+    P.at(per || 400, function () { node.innerHTML += ln; });
+  });
+  P.at(160, function () { node.classList.remove('caret'); });
+  return node;
+}
+
+/* ---- 逐行落位 ----
+   注意首行也要有延时：写成 per*i 时第 0 行 delay=0，会与首屏同步落位，
+   行数少的时候整表看起来是「一次性出现」，过程就白做了。 */
+function staggerRows(table, per) {
+  per = per || 70;
+  table.classList.add('stagger');
+  table.querySelectorAll('tbody tr').forEach(function (tr, i) {
+    setTimeout(function () { tr.classList.add('in'); }, per * (i + 1));
+  });
+}
+
+/* ============================================================
+   起点：把舞台恢复成「什么都还没发生」的状态
+   AI 类需求的起点是空会话，不是回答完的会话。
+   ============================================================ */
+function reset() {
+  P.reset();
+  gcHide();
+  var s = $('#stage');
+  s.innerHTML = '';   // TODO: 铺起始页内容（空状态 / 推荐入口 / 空表单）
+  step('A1', '起点');
+}
+
+/* ============================================================
+   时间轴主线：帧序与画面清单一致
+   凡是 PRD 写了「中间态 / loading / 生成中」的，都要在这里占一段。
+   ============================================================ */
+function play() {
+  P.reset(); P.playing = true;
+  var s = $('#stage');
+
+  /* 帧 1：用户输入 —— 逐字敲入 */
+  P.at(120, function () { step('A1', '输入'); gcTo('#input'); });
+  typeInto('#input', DATA.q);
+
+  /* 帧 2：提交 —— 起始页退场，输入变气泡上屏 */
+  P.at(320, function () { gcTo('#submit'); });
+  P.at(420, function () {
+    gcClick('#submit');
+    s.innerHTML = '';
+    s.appendChild(el('div', 'msg-user in', DATA.q));
+    gcHide();
+    step('A2', '已提交');
+  });
+
+  /* 帧 3：后台处理 —— 此刻结果必须还没出现 */
+  var tool;
+  P.at(420, function () {
+    tool = el('div', 'tool-row in');
+    tool.innerHTML = '<span class="spin"></span>{工具名}<span class="tail">处理中…</span>';
+    s.appendChild(tool);
+    step('A2', '处理中');
+  });
+
+  /* 帧 4：处理完成 —— 前导文字流式吐出 */
+  P.at(1500, function () {
+    tool.innerHTML = '{工具名} 已完成';
+    step('A3', '开始生成');
+  });
+  stream(s, [DATA.lead]);
+
+  /* 帧 5：结果落位 —— 表格逐行 / 折线描画 */
+  P.at(360, function () {
+    // var card = resultCard(); s.appendChild(card); staggerRows(card.querySelector('table'));
+    step('A3', '结果落位');
+  });
+
+  /* 帧 6：自动演示一次关键操作，然后交还用户手动点 */
+  P.at(800, function () {
+    // gcTo('.key-target'); 展示 hover / 选中态
+    step('A4', '可继续手动操作');
+  });
+  P.at(1400, function () { gcHide(); P.playing = false; });
+}
+
+/* 跳到结果：评审现场不想等动画时用。直接构造终态，不走时间轴。 */
+function showResult() {
+  P.reset(); gcHide();
+  var s = $('#stage');
+  s.innerHTML = '';
+  s.appendChild(el('div', 'msg-user', DATA.q));
+  s.appendChild(el('div', 'msg-ai', DATA.lead));
+  // s.appendChild(resultCard());   // 不加 .in，不逐行
+  step('A3', '结果态（已跳过过程）');
+}
+
+$('#btn-replay').addEventListener('click', function () { reset(); setTimeout(play, 260); });
+$('#btn-skip').addEventListener('click', showResult);
+
+reset();
+setTimeout(play, 700);   // 打开即自动演播
+</script>
+</body>
+</html>
